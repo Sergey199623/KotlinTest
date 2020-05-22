@@ -1,4 +1,4 @@
-package com.example.rumpilstilstkin.kotlintest.adapters
+package com.example.testing.kotlintesting.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,13 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.rumpilstilstkin.kotlintest.R
-import com.example.rumpilstilstkin.kotlintest.models.ExampleModel
+import com.example.rumpilstilstkin.kotlintesting.R
+import com.example.rumpilstilstkin.kotlintesting.models.ExampleModel
 
-
-///////////////////////////////////////////////////////////////////////////
-// Example Adapter
-///////////////////////////////////////////////////////////////////////////
 
 class ExampleAdapter(val context: Context): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
@@ -34,10 +30,6 @@ class ExampleAdapter(val context: Context): RecyclerView.Adapter<RecyclerView.Vi
         (holder as ExampleViewHolder).bind(model)
     }
 }
-
-///////////////////////////////////////////////////////////////////////////
-// Example View Holder
-///////////////////////////////////////////////////////////////////////////
 
 class ExampleViewHolder private constructor(root: View) : RecyclerView.ViewHolder(root) {
     companion object {

@@ -1,33 +1,27 @@
-package com.example.rumpilstilstkin.kotlintest.screens
+package com.example.testing.kotlintesting.screens
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import com.example.rumpilstilstkin.kotlintest.R
-import com.example.rumpilstilstkin.kotlintest.screens.fragments.ExampleColorFragment
-import com.example.rumpilstilstkin.kotlintest.screens.fragments.ExampleListFragment
-import com.example.rumpilstilstkin.kotlintest.screens.home.HomeScreens
-import com.example.rumpilstilstkin.kotlintest.utils.fragmentTag
-import kotlinx.android.synthetic.main.activity_main_bottom.navigation
+import android.view.View
+import com.example.rumpilstilstkin.kotlintesting.R
+import com.example.rumpilstilstkin.kotlintesting.screens.fragments.ExampleColorFragment
+import com.example.rumpilstilstkin.kotlintesting.screens.fragments.ExampleListFragment
+import com.example.rumpilstilstkin.kotlintesting.screens.home.HomeScreens
+import com.example.rumpilstilstkin.kotlintesting.utils.fragmentTag
 
-
-///////////////////////////////////////////////////////////////////////////
-// Main Bottom Activity
-///////////////////////////////////////////////////////////////////////////
-
-class MainBottomActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener{
+class MainLeftActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
         private const val EXTRA_SCREEN_DATA = "screen_data_extra"
         private const val EXTRA_SHOW_SCREEN = "show_screen_extra"
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Properties
-    ///////////////////////////////////////////////////////////////////////////
 
     private val FRAGMENT_TAG_FIRST = fragmentTag<ExampleListFragment>()
     private val FRAGMENT_TAG_SECOND = fragmentTag<ExampleColorFragment>()
@@ -35,17 +29,34 @@ class MainBottomActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
     private var current: HomeScreens = HomeScreens.DEFAULT_SCREEN
 
+    private val drawerListener = object : DrawerLayout.SimpleDrawerListener() {
+        private var currentOffset = 0F
+        private var updateRequested = false
+
+        override fun onDrawerSlide(drawerView: View?, slideOffset: Float) {
+            if (slideOffset > currentOffset) {
+                currentOffset = slideOffset
+                if (!updateRequested) {
+                    updateRequested = true
+                }
+            }
+        }
+
+        override fun onDrawerClosed(drawerView: View?) {
+            currentOffset = 0F
+            updateRequested = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_bottom)
+        setContentView(R.layout.activity_main_left)
 
         if (savedInstanceState != null) {
             current = savedInstanceState.getSerializable(EXTRA_SHOW_SCREEN) as? HomeScreens ?: HomeScreens.DEFAULT_SCREEN
         }
-
-        navigation.setOnNavigationItemSelectedListener(this)
-
-        navigation.selectedItemId = current.itemId
+        initNavDrawer()
+        selectScreen(current)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -61,9 +72,23 @@ class MainBottomActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
         super.onSaveInstanceState(outState)
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Actions
-    ///////////////////////////////////////////////////////////////////////////
+    override fun onDestroy() {
+        nav_drawer.removeDrawerListener(drawerListener)
+        super.onDestroy()
+    }
+
+    private fun initNavDrawer() {
+
+        setSupportActionBar(toolbar)
+
+        nav_drawer.addDrawerListener(drawerListener)
+
+        val toggle = ActionBarDrawerToggle(this, nav_drawer, toolbar, R.string.app_name, R.string.app_name)
+        nav_drawer.addDrawerListener(toggle)
+        toggle.syncState()
+
+        navigation_menu.setNavigationItemSelectedListener(this)
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -71,12 +96,10 @@ class MainBottomActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
             R.id.action_second -> selectScreen(HomeScreens.SECOND)
             R.id.action_third -> selectScreen(HomeScreens.THIRD)
         }
+        closeDrawer()
         return true
-    }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Navigators
-    ///////////////////////////////////////////////////////////////////////////
+    }
 
     private fun selectScreen(screen: HomeScreens){
         current = screen
@@ -93,10 +116,6 @@ class MainBottomActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Helpers
-    ///////////////////////////////////////////////////////////////////////////
-
     fun placeFragment(fragmentTag: String, args: Bundle? = null): Fragment? {
         if (isFinishing)
             return null
@@ -112,4 +131,11 @@ class MainBottomActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
         return fragment
     }
+
+    private fun closeDrawer(): Boolean =
+            if (nav_drawer.isDrawerOpen(GravityCompat.START)) {
+                nav_drawer.closeDrawer(GravityCompat.START)
+                true
+            }
+            else false
 }

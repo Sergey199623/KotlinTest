@@ -1,4 +1,4 @@
-package com.example.rumpilstilstkin.kotlintest
+package com.example.rumpilstilstkin.kotlintesting
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

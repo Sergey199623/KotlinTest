@@ -1,4 +1,4 @@
-package com.example.rumpilstilstkin.kotlintest
+package com.example.rumpilstilstkin.kotlintesting
 
 import org.junit.Test
 

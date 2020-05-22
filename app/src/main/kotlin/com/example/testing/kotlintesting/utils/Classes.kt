@@ -1,4 +1,4 @@
-package com.example.rumpilstilstkin.kotlintest.utils
+package com.example.testing.kotlintesting.utils
 
 import android.support.v4.app.Fragment
 
